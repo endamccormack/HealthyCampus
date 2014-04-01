@@ -3,6 +3,7 @@ package com.Endanger.healthycampusapp.healthycampus.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
@@ -28,6 +29,7 @@ public class MainActivity extends Activity {
     CustomDrawerAdapter adapter;
 
     List<DrawerItem> dataList;
+    Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         // Initializing
+        fragment = null;
         dataList = new ArrayList<DrawerItem>();
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -98,7 +101,6 @@ public class MainActivity extends Activity {
 
     public void SelectItem(int possition) {
 
-        Fragment fragment = null;
         Bundle args = new Bundle();
         switch (possition) {
             case 0:
@@ -115,20 +117,12 @@ public class MainActivity extends Activity {
                 args.putInt(FragmentTwo.IMAGE_RESOURCE_ID, dataList.get(possition)
                         .getImgResID());
                 break;
-//            case 2:
-//                fragment = new FragmentThree();
-//                args.putString(FragmentThree.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentThree.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 3:
-//                fragment = new FragmentOne();
-//                args.putString(FragmentOne.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
+            case 2:
+                fragment = new RecipeGrid();
+                break;
+            case 3:
+
+                break;
 //            case 4:
 //                fragment = new FragmentTwo();
 //                args.putString(FragmentTwo.ITEM_NAME, dataList.get(possition)
@@ -198,8 +192,10 @@ public class MainActivity extends Activity {
 
         fragment.setArguments(args);
         FragmentManager frgManager = getFragmentManager();
-        frgManager.beginTransaction().replace(R.id.content_frame, fragment)
-                .commit();
+
+            frgManager.beginTransaction().replace(R.id.content_frame, fragment)
+                    .commit();
+
 
         mDrawerList.setItemChecked(possition, true);
         setTitle(dataList.get(possition).getItemName());

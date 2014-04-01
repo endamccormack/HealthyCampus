@@ -16,6 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.Endanger.healthycampusapp.healthycampus.app.RecipeActivity"
+            android:label="@string/title_activity_recipe"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>
