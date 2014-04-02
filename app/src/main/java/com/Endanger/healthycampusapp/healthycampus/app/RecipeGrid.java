@@ -34,7 +34,7 @@ public class RecipeGrid extends Fragment {
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                Toast.makeText(v.getContext(), "" + position, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), "" + position, Toast.LENGTH_SHORT).show();
                 Intent k = new Intent(getActivity(), RecipeActivity.class);
                 startActivityForResult(k, 1);
                 getActivity().overridePendingTransition(R.anim.push_right_out, R.anim.push_right_in);

@@ -3,12 +3,15 @@ package com.Endanger.healthycampusapp.healthycampus.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.res.Configuration;
+import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -34,6 +37,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
 
         // Initializing
@@ -47,16 +51,16 @@ public class MainActivity extends Activity {
                 GravityCompat.START);
 
         // Add Drawer Item to dataList
-        dataList.add(new DrawerItem("Home", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("Breakfast", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("Lunch", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("Dinner", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("Snacks", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("Favorites", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("Facebook", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("Twitter", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("About", R.drawable.ic_launcher));
-        dataList.add(new DrawerItem("IT Sligo", R.drawable.ic_launcher));
+        dataList.add(new DrawerItem("Home", R.drawable.home));
+        dataList.add(new DrawerItem("Breakfast", R.drawable.breakfast));
+        dataList.add(new DrawerItem("Lunch", R.drawable.lunch));
+        dataList.add(new DrawerItem("Dinner", R.drawable.dinner));
+        dataList.add(new DrawerItem("Snacks", R.drawable.snacks));
+        dataList.add(new DrawerItem("IT Sligo", R.drawable.itsligo));
+        dataList.add(new DrawerItem("Facebook", R.drawable.facebook));
+        dataList.add(new DrawerItem("Twitter", R.drawable.twitter));
+        dataList.add(new DrawerItem("About", R.drawable.about));
+
 
         adapter = new CustomDrawerAdapter(this, R.layout.custom_drawer_item,
                 dataList);
@@ -102,99 +106,45 @@ public class MainActivity extends Activity {
     public void SelectItem(int possition) {
 
         Bundle args = new Bundle();
+
         switch (possition) {
             case 0:
-                fragment = new FragmentOne();
-                args.putString(FragmentOne.ITEM_NAME, dataList.get(possition)
-                        .getItemName());
-                args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition)
-                        .getImgResID());
+                fragment = new RecipeGrid();
+                displayFragment(args);
                 break;
             case 1:
-                fragment = new FragmentTwo();
-                args.putString(FragmentTwo.ITEM_NAME, dataList.get(possition)
-                        .getItemName());
-                args.putInt(FragmentTwo.IMAGE_RESOURCE_ID, dataList.get(possition)
-                        .getImgResID());
+                fragment = new RecipeGrid();
+                displayFragment(args);
                 break;
             case 2:
                 fragment = new RecipeGrid();
+                displayFragment(args);
                 break;
             case 3:
-
+                fragment = new RecipeGrid();
+                displayFragment(args);
                 break;
-//            case 4:
-//                fragment = new FragmentTwo();
-//                args.putString(FragmentTwo.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentTwo.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 5:
-//                fragment = new FragmentThree();
-//                args.putString(FragmentThree.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentThree.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 6:
-//                fragment = new FragmentOne();
-//                args.putString(FragmentOne.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 7:
-//                fragment = new FragmentTwo();
-//                args.putString(FragmentTwo.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentTwo.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 8:
-//                fragment = new FragmentThree();
-//                args.putString(FragmentThree.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentThree.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 9:
-//                fragment = new FragmentOne();
-//                args.putString(FragmentOne.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 10:
-//                fragment = new FragmentTwo();
-//                args.putString(FragmentTwo.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentTwo.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 11:
-//                fragment = new FragmentThree();
-//                args.putString(FragmentThree.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentThree.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
-//            case 12:
-//                fragment = new FragmentOne();
-//                args.putString(FragmentOne.ITEM_NAME, dataList.get(possition)
-//                        .getItemName());
-//                args.putInt(FragmentOne.IMAGE_RESOURCE_ID, dataList.get(possition)
-//                        .getImgResID());
-//                break;
+            case 4:
+                fragment = new RecipeGrid();
+                displayFragment(args);
+                break;
+            case 5:
+                displayBrowsers("http://www.itsligo.ie");
+                break;
+            case 6:
+                displayBrowsers("https://www.facebook.com/itsligo");
+                break;
+            case 7:
+                displayBrowsers("https://twitter.com/itsligo");
+                break;
+            case 8:
+                fragment = new FragmentAbout();
+                displayFragment(args);
+                break;
             default:
                 break;
         }
 
-        fragment.setArguments(args);
-        FragmentManager frgManager = getFragmentManager();
-
-            frgManager.beginTransaction().replace(R.id.content_frame, fragment)
-                    .commit();
 
 
         mDrawerList.setItemChecked(possition, true);
@@ -202,7 +152,18 @@ public class MainActivity extends Activity {
         mDrawerLayout.closeDrawer(mDrawerList);
 
     }
-
+    public void displayFragment(Bundle args){
+        fragment.setArguments(args);
+        FragmentManager frgManager = getFragmentManager();
+        frgManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    }
+    public void displayBrowsers(String url){
+        Uri uri = Uri.parse(url);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+        browserIntent.setDataAndType(uri, "text/html");
+        browserIntent.addCategory(Intent.CATEGORY_BROWSABLE);
+        this.startActivity(browserIntent);
+    }
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;

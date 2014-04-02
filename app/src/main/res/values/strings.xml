@@ -2,13 +2,14 @@
 <resources>
 
     <string name="app_name">Healthy Campus</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
     <string name="title_activity_recipe">RecipeActivity</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section1">Overview</string>
+    <string name="title_section2">Ingredients</string>
+    <string name="title_section3">Method</string>
+    <string name="about_text">Developed by Enda McCormack for the Institute of Technology Sligo</string>
 
+    <color name="white">#cccccc</color>
 </resources>
