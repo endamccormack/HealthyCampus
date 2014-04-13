@@ -1,11 +1,20 @@
 
 package com.Endanger.healthycampusapp.healthycampus.app;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
@@ -15,11 +24,28 @@ import android.os.Handler;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import com.Endanger.healthycampusapp.healthycampus.app.database.Recipe;
+import com.Endanger.healthycampusapp.healthycampus.app.helpers.CreateObjectFromJson;
+import com.Endanger.healthycampusapp.healthycampus.app.helpers.ServiceHandler;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends Activity {
 
@@ -29,10 +55,21 @@ public class MainActivity extends Activity {
 
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
+
     CustomDrawerAdapter adapter;
+    ArrayList<HashMap<String, String>> arraylist;
+    JSONObject jsonobject;
+    JSONArray jsonarray;
+
+    ProgressDialog mProgressDialog;
+
 
     List<DrawerItem> dataList;
     Fragment fragment;
+    String url_Recipes = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
+    String url_Recipe_Tag = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
+    String url_Tags = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
+    String url_Ingredients = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +131,7 @@ public class MainActivity extends Activity {
             SelectItem(0);
         }
 
+        new DownloadJSON().execute();
     }
 
     @Override
@@ -202,6 +240,70 @@ public class MainActivity extends Activity {
                                 long id) {
             SelectItem(position);
 
+        }
+    }
+
+    private class DownloadJSON extends AsyncTask<Void, Void, Void> {
+
+        private ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+        InputStream inputStream = null;
+        String result = "";
+
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            return null;
+//        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Create a progressdialog
+            mProgressDialog = new ProgressDialog(MainActivity.this);
+            // Set progressdialog title
+            mProgressDialog.setTitle("Health Campus");
+            // Set progressdialog message
+            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setIndeterminate(false);
+            // Show progressdialog
+            mProgressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ServiceHandler sh = new ServiceHandler();
+
+            // Making a request to url and getting response
+            result = sh.makeServiceCall(url_Recipes , ServiceHandler.GET);
+
+            List<Recipe> r = new CreateObjectFromJson().getRecipeObjectsFromJson(result);
+            result = r.get(0).getTitle() != null ? r.get(0).getTitle() : "stuff";
+
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void args) {
+
+            mProgressDialog.setMessage(result);
+
+
+//            AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getApplicationContext());
+//
+//            dlgAlert.setMessage(result.toString());
+//
+//            dlgAlert.setTitle("App Title");
+//            dlgAlert.setPositiveButton("OK", null);
+//            dlgAlert.setCancelable(true);
+//            dlgAlert.create().show();
+            // Locate the listview in listview_main.xml
+            //listview = (ListView) findViewById(R.id.listview);
+            // Pass the results into ListViewAdapter.java
+            //adapter = new ListViewAdapter(MainActivity.this, arraylist);
+            // Set the adapter to the ListView
+            //listview.setAdapter(adapter);
+            // Close the progressdialog
+            //mProgressDialog.dismiss();
         }
     }
 
