@@ -7,6 +7,9 @@ import android.provider.BaseColumns;
  */
 public class HealthyCampusDbContract {
 
+    public static final String DATABASE_NAME = "HeathyCampusDb";
+    public static final int DATABASE_VERSION = 1;
+
     public HealthyCampusDbContract(){}
 
     public static abstract class Recipe implements BaseColumns{
@@ -18,6 +21,7 @@ public class HealthyCampusDbContract {
         public static final String COLUMN_NAME_PREP_TIME = "PrepTime";
         public static final String COLUMN_NAME_COOK_TIME = "CookTime";
         public static final String COLUMN_NAME_IMAGE_URL = "ImageURL";
+        public static final String COLUMN_NAME_DIFFICULTY_LEVEL = "DifficultyLevel";
     }
 
     public static abstract class Tag implements BaseColumns{
@@ -27,17 +31,17 @@ public class HealthyCampusDbContract {
 
     public static abstract class TagRecipes implements BaseColumns{
         public static final String TABLE_NAME = "TagRecipes";
-        public static final String COLUMN_NAME_TAG_NAME = "Tag_TagName";
-        public static final String COLUMN_NAME_RECIPE_ID = "Recipe_RecipeId";
+        public static final String COLUMN_NAME_TAG_NAME = "TagName";
+        public static final String COLUMN_NAME_RECIPE_ID = "RecipeId";
 
     }
 
     public static abstract class Ingredient implements BaseColumns{
         public static final String TABLE_NAME = "Ingredient";
-        public static final String COLUMN_NAME_INGREDIENT_ID = "entryid";
-        public static final String COLUMN_NAME_NAME = "title";
-        public static final String COLUMN_NAME_AMOUNT_IN_GRAMS = "subtitle";
-        public static final String COLUMN_NAME_INGREDIENT_TYPE = "entryid";
-        public static final String COLUMN_NAME_RECIPE_ID = "title";
+        public static final String COLUMN_NAME_INGREDIENT_ID = "IngredientId";
+        public static final String COLUMN_NAME_NAME = "Name";
+        public static final String COLUMN_NAME_AMOUNT_IN_GRAMS = "AmountInGrams";
+        public static final String COLUMN_NAME_INGREDIENT_TYPE = "IngredientType";
+        public static final String COLUMN_NAME_RECIPE_ID = "RecipeId";
     }
 }

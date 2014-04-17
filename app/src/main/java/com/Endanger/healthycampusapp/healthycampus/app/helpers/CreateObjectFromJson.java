@@ -3,7 +3,10 @@ package com.Endanger.healthycampusapp.healthycampus.app.helpers;
 import android.util.Log;
 
 import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDbContract;
+import com.Endanger.healthycampusapp.healthycampus.app.database.Ingredient;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Recipe;
+import com.Endanger.healthycampusapp.healthycampus.app.database.Tag;
+import com.Endanger.healthycampusapp.healthycampus.app.database.TagRecipes;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,43 +28,22 @@ public class CreateObjectFromJson {
 
         if (recipeJson != null) {
             try {
-               // JSONObject jsonObj = new JSONObject(recipeJson);
-
-                // Getting JSON Array node
                 JSONArray recipesJsonArray = new JSONArray(recipeJson);
 
-                // looping through All Contacts
                 for (int i = 0; i < recipesJsonArray.length(); i++) {
                     JSONObject rj = recipesJsonArray.getJSONObject(i);
                     Recipe r = new Recipe();
 
-//                    String id = c.getString(TAG_ID);
-//                    String name = c.getString(TAG_NAME);
-//                    String email = c.getString(TAG_EMAIL);
-//                    String address = c.getString(TAG_ADDRESS);
-//                    String gender = c.getString(TAG_GENDER);
-//
-//                    // Phone node is JSON Object
-//                    JSONObject phone = c.getJSONObject(TAG_PHONE);
-//                    String mobile = phone.getString(TAG_PHONE_MOBILE);
-//                    String home = phone.getString(TAG_PHONE_HOME);
-//                    String office = phone.getString(TAG_PHONE_OFFICE);
-
-                    // tmp hashmap for single contact
-//                    HashMap<String, String> contact = new HashMap<String, String>();
-//
-//                    // adding each child node to HashMap key => value
-//                    contact.put(TAG_ID, id);
-//                    contact.put(TAG_NAME, name);
-//                    contact.put(TAG_EMAIL, email);
-//                    contact.put(TAG_PHONE_MOBILE, mobile);
-
-                    // adding contact to contact list
-                    //contactList.add(contact);
-                    r.setTitle(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_TITLE));
+                    r.setRecipeId(rj.getInt(HealthyCampusDbContract.Recipe.COLUMN_NAME_RECIPE_ID));
+                    r.setTitle(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_TITLE) != "null" ? rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_TITLE) : "Unknown");
+                    r.setDescription(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_DESCRIPTION) != "null" ? rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_DESCRIPTION) : "Unknown");
+                    r.setMethod(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_METHOD) != "null" ? rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_METHOD) : "Unknown");
+                    r.setPrepTime(rj.getDouble(HealthyCampusDbContract.Recipe.COLUMN_NAME_PREP_TIME));
+                    r.setPrepTime(rj.getDouble(HealthyCampusDbContract.Recipe.COLUMN_NAME_COOK_TIME));
+                    r.setDifficultyLevel(rj.getInt(HealthyCampusDbContract.Recipe.COLUMN_NAME_DIFFICULTY_LEVEL));
+                    r.setImageURL(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_IMAGE_URL) != null ? rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_IMAGE_URL)  : "Default");
 
                     recipes.add(r);
-
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -73,15 +55,89 @@ public class CreateObjectFromJson {
         return recipes;
     }
 
-    public String getRecipeTagObjectsFromJson(String tagsJson){
-        return "";
+    public List<TagRecipes> getRecipeTagObjectsFromJson(String tagsRecipeJson){
+        List<TagRecipes> tagRecipeses = new ArrayList<TagRecipes>();
+
+        if (tagsRecipeJson != null) {
+            try {
+                JSONArray recipestagJsonArray = new JSONArray(tagsRecipeJson);
+
+                for (int i = 0; i < recipestagJsonArray.length(); i++) {
+                    JSONObject rj = recipestagJsonArray.getJSONObject(i);
+                    TagRecipes tr = new TagRecipes();
+
+                    tr.setRecipeId(rj.getInt(HealthyCampusDbContract.TagRecipes.COLUMN_NAME_RECIPE_ID));
+                    tr.setTagName(rj.getString(HealthyCampusDbContract.TagRecipes.COLUMN_NAME_TAG_NAME));
+
+                    tagRecipeses.add(tr);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e("ServiceHandler", "Couldn't get any data from the url");
+        }
+
+        return tagRecipeses;
     }
 
-    public String getTagObjectsFromJson(String tagsJson){
-        return "";
+    public List<Tag> getTagObjectsFromJson(String tagsJson){
+        List<Tag> tags = new ArrayList<Tag>();
+
+        if (tagsJson != null) {
+            try {
+                JSONArray tagsJsonArray = new JSONArray(tagsJson);
+
+                for (int i = 0; i < tagsJsonArray.length(); i++) {
+                    JSONObject rj = tagsJsonArray.getJSONObject(i);
+                    Tag t = new Tag();
+
+                    t.setTagName(rj.getString(HealthyCampusDbContract.Tag.COLUMN_NAME_TAG_NAME));
+
+                    tags.add(t);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e("ServiceHandler", "Couldn't get any data from the url");
+        }
+
+        return tags;
     }
 
-    public String getIngredientObjectsFromJson(String tagsJson){
-        return "";
+    public List<Ingredient> getIngredientObjectsFromJson(String ingredientsJson){
+        List<Ingredient> ingredients = new ArrayList<Ingredient>();
+
+        if (ingredientsJson != null) {
+            try {
+                JSONArray ingredientsJsonArray = new JSONArray(ingredientsJson);
+
+                for (int j = 0; j < ingredientsJsonArray.length(); j++) {
+                    JSONObject ij = ingredientsJsonArray.getJSONObject(j);
+                    Ingredient i = new Ingredient();
+
+                    i.setRecipeId(ij.getInt(HealthyCampusDbContract.Ingredient.COLUMN_NAME_INGREDIENT_ID));
+
+                    i.setName(ij.getString(HealthyCampusDbContract.Ingredient.COLUMN_NAME_NAME) != "null" ?
+                            ij.getString(HealthyCampusDbContract.Ingredient.COLUMN_NAME_NAME) : "Unknown");
+
+                    i.setIngredientType(ij.getString(HealthyCampusDbContract.Ingredient.COLUMN_NAME_INGREDIENT_TYPE) != "null" ?
+                            ij.getString(HealthyCampusDbContract.Ingredient.COLUMN_NAME_INGREDIENT_TYPE) : "Unknown");
+
+                    i.setAmountInGrams(ij.getInt(HealthyCampusDbContract.Ingredient.COLUMN_NAME_AMOUNT_IN_GRAMS));
+                    i.setRecipeId(ij.getInt(HealthyCampusDbContract.Ingredient.COLUMN_NAME_RECIPE_ID));
+
+
+                    ingredients.add(i);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e("ServiceHandler", "Couldn't get any data from the url");
+        }
+
+        return ingredients;
     }
 }

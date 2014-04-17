@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +16,8 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,7 +36,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDataHandler;
+import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDbContract;
+import com.Endanger.healthycampusapp.healthycampus.app.database.Ingredient;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Recipe;
+import com.Endanger.healthycampusapp.healthycampus.app.database.Tag;
+import com.Endanger.healthycampusapp.healthycampus.app.database.TagRecipes;
 import com.Endanger.healthycampusapp.healthycampus.app.helpers.CreateObjectFromJson;
 import com.Endanger.healthycampusapp.healthycampus.app.helpers.ServiceHandler;
 
@@ -67,9 +77,9 @@ public class MainActivity extends Activity {
     List<DrawerItem> dataList;
     Fragment fragment;
     String url_Recipes = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
-    String url_Recipe_Tag = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
-    String url_Tags = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
-    String url_Ingredients = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
+    String url_Recipe_Tag = "http://healthycampusportal.azurewebsites.net/Recipe/RecipeTagJson";
+    String url_Tags = "http://healthycampusportal.azurewebsites.net/Recipe/TagJson";
+    String url_Ingredients = "http://healthycampusportal.azurewebsites.net/Recipe/IngredientJson";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +142,48 @@ public class MainActivity extends Activity {
         }
 
         new DownloadJSON().execute();
+
+        //test add tag
+        HealthyCampusDataHandler dh = new HealthyCampusDataHandler(getBaseContext());
+        Tag t1 = new Tag("breakfast");
+
+        //test add ingredient
+        Ingredient i = new Ingredient(1, "flour", 10, "", 1);
+
+        //test add recipe
+        Recipe r = new Recipe(1, "pandcake", "lorem ipsum", "lorem ipsum", 1.5, 1.5, 4,"stiff");
+
+        //test add recipetag
+        TagRecipes tr = new TagRecipes("breakfast", 1);
+
+        dh.open();
+
+        try {
+            t1.InsertIntoDatabase(dh.WritableDb());
+            i.InsertIntoDatabase(dh.WritableDb());
+            r.InsertIntoDatabase(dh.WritableDb());
+            tr.InsertIntoDatabase(dh.WritableDb());
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        List<Tag> allTags = Tag.GetAllTagsFromDatabase(dh.WritableDb());
+        Tag daT = Tag.GetTagFromDatabase(allTags.get(0).getTagName().toString(), dh.WritableDb());
+
+        List<Ingredient> allIngredients = Ingredient.GetAllIngredientsFromDatabase(dh.WritableDb());
+        Ingredient daI = Ingredient.GetIngredientFromDatabase(allIngredients.get(0).getIngredientId(), allIngredients.get(0).getRecipeId(), dh.WritableDb());
+
+        List<Recipe> allRecipes = Recipe.GetAllRecipesFromDatabase(dh.WritableDb());
+        Recipe daR = Recipe.GetRecipeFromDatabase(allRecipes.get(0).getRecipeId(), dh.WritableDb());
+
+        List<TagRecipes> allTagRecipes = TagRecipes.GetAllTagRecipesFromDatabase(dh.WritableDb());
+        TagRecipes daRT = TagRecipes.GetTagRecipeFromDatabase(allTagRecipes.get(0).getTagName().toString(),
+                                                                allTagRecipes.get(0).getRecipeId(), dh.WritableDb());
+
+        dh.close();
     }
 
     @Override
@@ -273,10 +325,31 @@ public class MainActivity extends Activity {
             ServiceHandler sh = new ServiceHandler();
 
             // Making a request to url and getting response
-            result = sh.makeServiceCall(url_Recipes , ServiceHandler.GET);
+            String recipeJson = sh.makeServiceCall(url_Recipes , ServiceHandler.GET);
+            List<Recipe> r = new CreateObjectFromJson().getRecipeObjectsFromJson(recipeJson);
 
-            List<Recipe> r = new CreateObjectFromJson().getRecipeObjectsFromJson(result);
-            result = r.get(0).getTitle() != null ? r.get(0).getTitle() : "stuff";
+            String recipeTagJson = sh.makeServiceCall(url_Recipe_Tag , ServiceHandler.GET);
+            List<TagRecipes> rt = new CreateObjectFromJson().getRecipeTagObjectsFromJson(recipeTagJson);
+
+            String tagJson = sh.makeServiceCall(url_Tags , ServiceHandler.GET);
+            List<Tag> t = new CreateObjectFromJson().getTagObjectsFromJson(tagJson);
+
+            String ingredientJson = sh.makeServiceCall(url_Ingredients , ServiceHandler.GET);
+            List<Ingredient> i = new CreateObjectFromJson().getIngredientObjectsFromJson(ingredientJson);
+
+
+            //getBaseContext().deleteDatabase(HealthyCampusDbContract.DATABASE_NAME);
+
+//            HealthyCampusDataHandler dh = new HealthyCampusDataHandler(getBaseContext());
+//            Tag t1 = t.get(0);
+//            t1.InsertIntoDatabase(dh.WriteableDb());
+//
+//            List<Tag> allTags = Tag.GetAllTagsFromDatabase(dh.WriteableDb());
+//            Tag daT = Tag.GetTagFromDatabase(allTags.get(0).getTagName().toString(), dh.WriteableDb());
+//
+
+
+            result = r.get(0).toString();
 
             return null;
         }
@@ -304,6 +377,41 @@ public class MainActivity extends Activity {
             //listview.setAdapter(adapter);
             // Close the progressdialog
             //mProgressDialog.dismiss();
+        }
+    }
+
+    public class ImageDownloader extends AsyncTask<Void, Void, Void> {
+        private String Url;
+
+        public ImageDownloader(String url){
+            Url = url;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            Bitmap myBitmap = getBitmapFromURL(Url);
+
+            return null;
+        }
+
+        public Bitmap getBitmapFromURL(String link) {
+            try {
+                URL url = new URL(link);
+                HttpURLConnection connection = (HttpURLConnection) url
+                        .openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(input);
+
+                return myBitmap;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("getBmpFromUrl error: ", e.getMessage().toString());
+                return null;
+            }
         }
     }
 

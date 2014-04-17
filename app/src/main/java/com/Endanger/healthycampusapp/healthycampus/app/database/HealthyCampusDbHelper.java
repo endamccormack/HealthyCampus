@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Enda on 4/7/2014.
  */
 public class HealthyCampusDbHelper extends SQLiteOpenHelper {
+
     private static final String TEXT_TYPE = " TEXT";
     private static final String COMMA_SEP = ",";
     private static final String SQL_CREATE_RECIPE_ENTRIES =
@@ -18,12 +19,13 @@ public class HealthyCampusDbHelper extends SQLiteOpenHelper {
                     HealthyCampusDbContract.Recipe.COLUMN_NAME_METHOD + TEXT_TYPE + COMMA_SEP +
                     HealthyCampusDbContract.Recipe.COLUMN_NAME_PREP_TIME + TEXT_TYPE + COMMA_SEP +
                     HealthyCampusDbContract.Recipe.COLUMN_NAME_COOK_TIME + TEXT_TYPE + COMMA_SEP +
+                    HealthyCampusDbContract.Recipe.COLUMN_NAME_DIFFICULTY_LEVEL + " INTEGER " + COMMA_SEP +
                     HealthyCampusDbContract.Recipe.COLUMN_NAME_IMAGE_URL + TEXT_TYPE +
             " )";
 
     private static final String SQL_CREATE_TAG_ENTRIES =
             "CREATE TABLE " + HealthyCampusDbContract.Tag.TABLE_NAME + " (" +
-                    HealthyCampusDbContract.Tag.COLUMN_NAME_TAG_NAME + TEXT_TYPE + " PRIMARY KEY," +
+                    HealthyCampusDbContract.Tag.COLUMN_NAME_TAG_NAME + TEXT_TYPE + " PRIMARY KEY" +
                     " )";
 
     private static final String SQL_CREATE_INGREDIENT_ENTRIES =
@@ -51,11 +53,10 @@ public class HealthyCampusDbHelper extends SQLiteOpenHelper {
     static final String SQL_DELETE_TAG_RECIPE_ENTRIES =
             "DROP TABLE IF EXISTS " + HealthyCampusDbContract.TagRecipes.TABLE_NAME;
 
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "HealthCampus.db";
+
 
     public HealthyCampusDbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, HealthyCampusDbContract.DATABASE_NAME, null, HealthyCampusDbContract.DATABASE_VERSION);
     }
 
     @Override
