@@ -63,8 +63,8 @@ public class TagRecipes {
     }
 
     public static TagRecipes GetTagRecipeFromDatabase(String tagName, int recipeId, SQLiteDatabase db){
-        String where = HealthyCampusDbContract.TagRecipes.COLUMN_NAME_TAG_NAME + "= '" + tagName + "' AND" +
-                        HealthyCampusDbContract.TagRecipes.COLUMN_NAME_RECIPE_ID +"= " + recipeId;
+        String where = HealthyCampusDbContract.TagRecipes.COLUMN_NAME_TAG_NAME + " = '" + tagName + "' AND " +
+                        HealthyCampusDbContract.TagRecipes.COLUMN_NAME_RECIPE_ID +" = " + recipeId;
 
         Cursor c = db.query(HealthyCampusDbContract.TagRecipes.TABLE_NAME,
                 new String[]{HealthyCampusDbContract.TagRecipes.COLUMN_NAME_TAG_NAME,

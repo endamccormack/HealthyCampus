@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:gravity="center_vertical">
+    <CheckBox android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"/>
+    <TextView android:id="@+id/checkboxIngredientName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_toRightOf="@id/checkbox"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    <TextView
+        android:id="@+id/checkboxIngredientAmount"
+        android:layout_below="@id/checkboxIngredientName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6dp"
+        android:layout_marginTop="3dp"
+        android:layout_toRightOf="@id/checkbox"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+</RelativeLayout>

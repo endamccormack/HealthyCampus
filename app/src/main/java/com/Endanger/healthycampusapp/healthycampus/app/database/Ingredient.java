@@ -100,6 +100,30 @@ public class Ingredient {
         else return allIngredientsFromDatabase;
     }
 
+    public static List<Ingredient> GetAllIngredientsForRecipeFromDatabase(SQLiteDatabase db, int recipeId){
+
+        String where = HealthyCampusDbContract.Ingredient.COLUMN_NAME_RECIPE_ID + " = " + recipeId;
+
+        Cursor c = db.query(HealthyCampusDbContract.Ingredient.TABLE_NAME,
+                new String[]{HealthyCampusDbContract.Ingredient.COLUMN_NAME_INGREDIENT_ID,
+                        HealthyCampusDbContract.Ingredient.COLUMN_NAME_NAME,
+                        HealthyCampusDbContract.Ingredient.COLUMN_NAME_AMOUNT_IN_GRAMS,
+                        HealthyCampusDbContract.Ingredient.COLUMN_NAME_INGREDIENT_TYPE,
+                        HealthyCampusDbContract.Ingredient.COLUMN_NAME_RECIPE_ID},
+                where,null,null,null,null);
+
+        List<Ingredient> allIngredientsFromDatabase = new ArrayList<Ingredient>();
+
+        if (c.moveToFirst()){
+            do {
+                Ingredient i = new Ingredient(c.getInt(0), c.getString(1), c.getInt(2), c.getString(3), c.getInt(4));
+                allIngredientsFromDatabase.add(i);
+            } while (c.moveToNext());
+            return  allIngredientsFromDatabase;
+        }
+        else return allIngredientsFromDatabase;
+    }
+
     public static Ingredient GetIngredientFromDatabase(int ingredientId, int recipeId, SQLiteDatabase db){
 
         String where = HealthyCampusDbContract.Ingredient.COLUMN_NAME_INGREDIENT_ID + "= " + ingredientId;

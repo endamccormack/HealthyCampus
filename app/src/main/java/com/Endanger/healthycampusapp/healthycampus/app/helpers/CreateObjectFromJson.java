@@ -39,9 +39,9 @@ public class CreateObjectFromJson {
                     r.setDescription(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_DESCRIPTION) != "null" ? rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_DESCRIPTION) : "Unknown");
                     r.setMethod(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_METHOD) != "null" ? rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_METHOD) : "Unknown");
                     r.setPrepTime(rj.getDouble(HealthyCampusDbContract.Recipe.COLUMN_NAME_PREP_TIME));
-                    r.setPrepTime(rj.getDouble(HealthyCampusDbContract.Recipe.COLUMN_NAME_COOK_TIME));
+                    r.setCookTime(rj.getDouble(HealthyCampusDbContract.Recipe.COLUMN_NAME_COOK_TIME));
                     r.setDifficultyLevel(rj.getInt(HealthyCampusDbContract.Recipe.COLUMN_NAME_DIFFICULTY_LEVEL));
-                    r.setImageURL(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_IMAGE_URL) != null ? rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_IMAGE_URL)  : "Default");
+                    r.setImageURL(rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_IMAGE_URL) != "null" ? rj.getString(HealthyCampusDbContract.Recipe.COLUMN_NAME_IMAGE_URL)  : "");
 
                     recipes.add(r);
                 }
@@ -117,7 +117,7 @@ public class CreateObjectFromJson {
                     JSONObject ij = ingredientsJsonArray.getJSONObject(j);
                     Ingredient i = new Ingredient();
 
-                    i.setRecipeId(ij.getInt(HealthyCampusDbContract.Ingredient.COLUMN_NAME_INGREDIENT_ID));
+                    i.setIngredientId(ij.getInt(HealthyCampusDbContract.Ingredient.COLUMN_NAME_INGREDIENT_ID));
 
                     i.setName(ij.getString(HealthyCampusDbContract.Ingredient.COLUMN_NAME_NAME) != "null" ?
                             ij.getString(HealthyCampusDbContract.Ingredient.COLUMN_NAME_NAME) : "Unknown");

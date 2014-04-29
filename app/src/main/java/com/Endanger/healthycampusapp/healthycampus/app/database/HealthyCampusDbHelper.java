@@ -53,8 +53,6 @@ public class HealthyCampusDbHelper extends SQLiteOpenHelper {
     static final String SQL_DELETE_TAG_RECIPE_ENTRIES =
             "DROP TABLE IF EXISTS " + HealthyCampusDbContract.TagRecipes.TABLE_NAME;
 
-
-
     public HealthyCampusDbHelper(Context context) {
         super(context, HealthyCampusDbContract.DATABASE_NAME, null, HealthyCampusDbContract.DATABASE_VERSION);
     }
@@ -70,6 +68,15 @@ public class HealthyCampusDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
+        sqLiteDatabase.execSQL(SQL_DELETE_RECIPE_ENTRIES);
+        sqLiteDatabase.execSQL(SQL_DELETE_TAG_ENTRIES);
+        sqLiteDatabase.execSQL(SQL_DELETE_INGREDIENT_ENTRIES);
+        sqLiteDatabase.execSQL(SQL_DELETE_TAG_RECIPE_ENTRIES);
+
+        onCreate(sqLiteDatabase);
+    }
+
+    public void ResetDatabaseDefault(SQLiteDatabase sqLiteDatabase){
         sqLiteDatabase.execSQL(SQL_DELETE_RECIPE_ENTRIES);
         sqLiteDatabase.execSQL(SQL_DELETE_TAG_ENTRIES);
         sqLiteDatabase.execSQL(SQL_DELETE_INGREDIENT_ENTRIES);

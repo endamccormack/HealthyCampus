@@ -11,5 +11,7 @@
     <string name="title_section3">Method</string>
     <string name="about_text">Developed by Enda McCormack for the Institute of Technology Sligo</string>
 
-    <color name="white">#cccccc</color>
+    <color name="grey">#cccccc</color>
+    <color name="white">#ffffff</color>
+    <color name="greyText">#555555</color>
 </resources>

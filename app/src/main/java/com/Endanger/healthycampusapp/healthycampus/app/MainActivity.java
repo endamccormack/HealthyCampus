@@ -9,8 +9,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -30,32 +33,23 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.Endanger.healthycampusapp.healthycampus.app.adapters.ImageAdapter;
 import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDataHandler;
-import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDbContract;
-import com.Endanger.healthycampusapp.healthycampus.app.database.Ingredient;
+import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDbHelper;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Recipe;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Tag;
 import com.Endanger.healthycampusapp.healthycampus.app.database.TagRecipes;
-import com.Endanger.healthycampusapp.healthycampus.app.helpers.CreateObjectFromJson;
-import com.Endanger.healthycampusapp.healthycampus.app.helpers.ServiceHandler;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class MainActivity extends Activity {
 
@@ -67,25 +61,23 @@ public class MainActivity extends Activity {
     private CharSequence mTitle;
 
     CustomDrawerAdapter adapter;
-    ArrayList<HashMap<String, String>> arraylist;
-    JSONObject jsonobject;
-    JSONArray jsonarray;
 
-    ProgressDialog mProgressDialog;
-
+    HealthyCampusDataHandler dbHandler;
+    HealthyCampusDbHelper dbHelper;
 
     List<DrawerItem> dataList;
     Fragment fragment;
-    String url_Recipes = "http://healthycampusportal.azurewebsites.net/Recipe/recipejson";
-    String url_Recipe_Tag = "http://healthycampusportal.azurewebsites.net/Recipe/RecipeTagJson";
-    String url_Tags = "http://healthycampusportal.azurewebsites.net/Recipe/TagJson";
-    String url_Ingredients = "http://healthycampusportal.azurewebsites.net/Recipe/IngredientJson";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
+        //instantiate database accessor
+        dbHandler = new HealthyCampusDataHandler(getBaseContext());
+        dbHelper = new HealthyCampusDbHelper(getBaseContext());
 
         // Initializing
         fragment = null;
@@ -103,6 +95,7 @@ public class MainActivity extends Activity {
         dataList.add(new DrawerItem("Lunch", R.drawable.lunch));
         dataList.add(new DrawerItem("Dinner", R.drawable.dinner));
         dataList.add(new DrawerItem("Snacks", R.drawable.snacks));
+        dataList.add(new DrawerItem("Conversion", R.drawable.convert));
         dataList.add(new DrawerItem("IT Sligo", R.drawable.itsligo));
         dataList.add(new DrawerItem("Facebook", R.drawable.facebook));
         dataList.add(new DrawerItem("Twitter", R.drawable.twitter));
@@ -141,55 +134,13 @@ public class MainActivity extends Activity {
             SelectItem(0);
         }
 
-        new DownloadJSON().execute();
 
-        //test add tag
-        HealthyCampusDataHandler dh = new HealthyCampusDataHandler(getBaseContext());
-        Tag t1 = new Tag("breakfast");
-
-        //test add ingredient
-        Ingredient i = new Ingredient(1, "flour", 10, "", 1);
-
-        //test add recipe
-        Recipe r = new Recipe(1, "pandcake", "lorem ipsum", "lorem ipsum", 1.5, 1.5, 4,"stiff");
-
-        //test add recipetag
-        TagRecipes tr = new TagRecipes("breakfast", 1);
-
-        dh.open();
-
-        try {
-            t1.InsertIntoDatabase(dh.WritableDb());
-            i.InsertIntoDatabase(dh.WritableDb());
-            r.InsertIntoDatabase(dh.WritableDb());
-            tr.InsertIntoDatabase(dh.WritableDb());
-
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-
-        List<Tag> allTags = Tag.GetAllTagsFromDatabase(dh.WritableDb());
-        Tag daT = Tag.GetTagFromDatabase(allTags.get(0).getTagName().toString(), dh.WritableDb());
-
-        List<Ingredient> allIngredients = Ingredient.GetAllIngredientsFromDatabase(dh.WritableDb());
-        Ingredient daI = Ingredient.GetIngredientFromDatabase(allIngredients.get(0).getIngredientId(), allIngredients.get(0).getRecipeId(), dh.WritableDb());
-
-        List<Recipe> allRecipes = Recipe.GetAllRecipesFromDatabase(dh.WritableDb());
-        Recipe daR = Recipe.GetRecipeFromDatabase(allRecipes.get(0).getRecipeId(), dh.WritableDb());
-
-        List<TagRecipes> allTagRecipes = TagRecipes.GetAllTagRecipesFromDatabase(dh.WritableDb());
-        TagRecipes daRT = TagRecipes.GetTagRecipeFromDatabase(allTagRecipes.get(0).getTagName().toString(),
-                                                                allTagRecipes.get(0).getRecipeId(), dh.WritableDb());
-
-        dh.close();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        //getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -199,35 +150,39 @@ public class MainActivity extends Activity {
 
         switch (possition) {
             case 0:
-                fragment = new RecipeGrid();
+                fragment = new RecipeGrid(dbHandler, dbHelper, "");
                 displayFragment(args);
                 break;
             case 1:
-                fragment = new RecipeGrid();
+                fragment = new RecipeGrid(dbHandler, dbHelper, "Breakfast");
                 displayFragment(args);
                 break;
             case 2:
-                fragment = new RecipeGrid();
+                fragment = new RecipeGrid(dbHandler, dbHelper, "Lunch");
                 displayFragment(args);
                 break;
             case 3:
-                fragment = new RecipeGrid();
+                fragment = new RecipeGrid(dbHandler, dbHelper, "Dinner");
                 displayFragment(args);
                 break;
             case 4:
-                fragment = new RecipeGrid();
+                fragment = new RecipeGrid(dbHandler, dbHelper, "Snack");
                 displayFragment(args);
                 break;
             case 5:
-                displayBrowsers("http://www.itsligo.ie");
+                fragment = new FragmentConversionTable();
+                displayFragment(args);
                 break;
             case 6:
-                displayBrowsers("https://www.facebook.com/itsligo");
+                displayBrowsers("http://www.itsligo.ie");
                 break;
             case 7:
-                displayBrowsers("https://twitter.com/itsligo");
+                displayBrowsers("https://www.facebook.com/itsligo");
                 break;
             case 8:
+                displayBrowsers("https://twitter.com/itsligo");
+                break;
+            case 9:
                 fragment = new FragmentAbout();
                 displayFragment(args);
                 break;
@@ -295,124 +250,118 @@ public class MainActivity extends Activity {
         }
     }
 
-    private class DownloadJSON extends AsyncTask<Void, Void, Void> {
+    public static class RecipeGrid extends Fragment {
 
-        private ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
-        InputStream inputStream = null;
-        String result = "";
+        HealthyCampusDataHandler dHandler;
+        HealthyCampusDbHelper dHelper;
+        String theTag;
 
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            return null;
-//        }
+        List<Recipe> AllRecipes;
+        List<Recipe> RecipesForGrid;
+        List<TagRecipes> AllTags;
+        List<Integer> TagsWithRecipeIds;
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Create a progressdialog
-            mProgressDialog = new ProgressDialog(MainActivity.this);
-            // Set progressdialog title
-            mProgressDialog.setTitle("Health Campus");
-            // Set progressdialog message
-            mProgressDialog.setMessage("Loading...");
-            mProgressDialog.setIndeterminate(false);
-            // Show progressdialog
-            mProgressDialog.show();
+        public RecipeGrid(){
         }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            ServiceHandler sh = new ServiceHandler();
+        public RecipeGrid(HealthyCampusDataHandler hcdhandler, HealthyCampusDbHelper hcdhelper, String tag){
+            dHandler = hcdhandler;
+            dHelper = hcdhelper;
+            theTag = tag;
 
-            // Making a request to url and getting response
-            String recipeJson = sh.makeServiceCall(url_Recipes , ServiceHandler.GET);
-            List<Recipe> r = new CreateObjectFromJson().getRecipeObjectsFromJson(recipeJson);
+            dHandler.open();
+            AllRecipes = Recipe.GetAllRecipesFromDatabase(dHandler.WritableDb());
+            dHandler.close();
 
-            String recipeTagJson = sh.makeServiceCall(url_Recipe_Tag , ServiceHandler.GET);
-            List<TagRecipes> rt = new CreateObjectFromJson().getRecipeTagObjectsFromJson(recipeTagJson);
+            dHandler.open();
+            AllTags = TagRecipes.GetAllTagRecipesFromDatabase(dHandler.WritableDb());
+            dHandler.close();
 
-            String tagJson = sh.makeServiceCall(url_Tags , ServiceHandler.GET);
-            List<Tag> t = new CreateObjectFromJson().getTagObjectsFromJson(tagJson);
+            RecipesForGrid = new ArrayList<Recipe>();
+            TagsWithRecipeIds = new ArrayList<Integer>();
+            if(theTag == "")
+            {
+                RecipesForGrid = AllRecipes;
+            }
+            else {
+                for (int i = 0; i < AllTags.size(); i++) {
+                    if (AllTags.get(i).getTagName().equalsIgnoreCase(theTag)) {
+                        TagsWithRecipeIds.add(AllTags.get(i).getRecipeId());
+                    }
+                }
 
-            String ingredientJson = sh.makeServiceCall(url_Ingredients , ServiceHandler.GET);
-            List<Ingredient> i = new CreateObjectFromJson().getIngredientObjectsFromJson(ingredientJson);
-
-
-            //getBaseContext().deleteDatabase(HealthyCampusDbContract.DATABASE_NAME);
-
-//            HealthyCampusDataHandler dh = new HealthyCampusDataHandler(getBaseContext());
-//            Tag t1 = t.get(0);
-//            t1.InsertIntoDatabase(dh.WriteableDb());
-//
-//            List<Tag> allTags = Tag.GetAllTagsFromDatabase(dh.WriteableDb());
-//            Tag daT = Tag.GetTagFromDatabase(allTags.get(0).getTagName().toString(), dh.WriteableDb());
-//
-
-
-            result = r.get(0).toString();
-
-            return null;
-        }
-
-
-        @Override
-        protected void onPostExecute(Void args) {
-
-            mProgressDialog.setMessage(result);
-
-
-//            AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(getApplicationContext());
-//
-//            dlgAlert.setMessage(result.toString());
-//
-//            dlgAlert.setTitle("App Title");
-//            dlgAlert.setPositiveButton("OK", null);
-//            dlgAlert.setCancelable(true);
-//            dlgAlert.create().show();
-            // Locate the listview in listview_main.xml
-            //listview = (ListView) findViewById(R.id.listview);
-            // Pass the results into ListViewAdapter.java
-            //adapter = new ListViewAdapter(MainActivity.this, arraylist);
-            // Set the adapter to the ListView
-            //listview.setAdapter(adapter);
-            // Close the progressdialog
-            //mProgressDialog.dismiss();
-        }
-    }
-
-    public class ImageDownloader extends AsyncTask<Void, Void, Void> {
-        private String Url;
-
-        public ImageDownloader(String url){
-            Url = url;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            Bitmap myBitmap = getBitmapFromURL(Url);
-
-            return null;
-        }
-
-        public Bitmap getBitmapFromURL(String link) {
-            try {
-                URL url = new URL(link);
-                HttpURLConnection connection = (HttpURLConnection) url
-                        .openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                Bitmap myBitmap = BitmapFactory.decodeStream(input);
-
-                return myBitmap;
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("getBmpFromUrl error: ", e.getMessage().toString());
-                return null;
+                if (TagsWithRecipeIds != null) {
+                    for (int i = 0; i < AllRecipes.size(); i++) {
+                        if (TagsWithRecipeIds.contains(AllRecipes.get(i).getRecipeId())) {
+                            RecipesForGrid.add(AllRecipes.get(i));
+                        }
+                    }
+                }
             }
         }
+
+        public static final RecipeGrid newInstance(HealthyCampusDataHandler hcdhandler, HealthyCampusDbHelper hcdhelper, String tag)
+        {
+            RecipeGrid fragment = new RecipeGrid(hcdhandler, hcdhelper, tag);
+            Bundle args = new Bundle();
+            fragment.setArguments(args);
+
+            return fragment;
+        }
+
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+
+            final View view = inflater.inflate(R.layout.fragment_recipe_grid, container, false);
+            final ViewGroup viewGroup = container;
+
+            GridView gridView = (GridView) view.findViewById(R.id.gridview);
+
+            final ImageAdapter i = new ImageAdapter(view.getContext(), dHandler, dHelper, RecipesForGrid);
+            gridView.setAdapter(i);
+
+//            new Thread(new Runnable()
+//            {
+//                int time = 0;
+//                @Override
+//                public void run()
+//                {
+//                    while (time < 30) {
+//                        try {
+//                            Thread.sleep(2000);
+//                        } catch (Exception e) {
+//
+//                        }
+//
+//                        try {
+//                            i.notifyDataSetChanged();
+//                        } catch (Exception e) {
+//
+//                        }
+//                    }
+//                    Thread.currentThread().interrupt();
+//                }
+//            }).start();
+
+//            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+//                    Intent k = new Intent(getActivity(), RecipeActivity.class);
+//                    String recipeId = ((TextView)view.findViewById(R.id.hiddenRecipeId)).getText().toString();
+//
+//                    //im sincerely sorry
+//                    recipeId = ((TextView)(((GridView)view.findViewById(R.id.gridview)).getChildAt(position)).findViewById(R.id.hiddenRecipeId)).getText().toString();
+//
+//                    k.putExtra("RecipeId", recipeId);
+//                    startActivityForResult(k, 1);
+//
+//                    getActivity().overridePendingTransition(R.anim.push_left_out, R.anim.push_left_in);
+//                }
+//            });
+
+            return view;
+        }
+
     }
 
 }

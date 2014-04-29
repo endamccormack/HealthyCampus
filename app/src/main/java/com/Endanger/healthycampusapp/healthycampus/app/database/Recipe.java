@@ -1,10 +1,17 @@
 package com.Endanger.healthycampusapp.healthycampus.app.database;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 
+import com.Endanger.healthycampusapp.healthycampus.app.R;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,6 +118,7 @@ public class Recipe {
         values.put(HealthyCampusDbContract.Recipe.COLUMN_NAME_DIFFICULTY_LEVEL, DifficultyLevel);
         values.put(HealthyCampusDbContract.Recipe.COLUMN_NAME_IMAGE_URL, ImageURL);
 
+
         return db.insertOrThrow(HealthyCampusDbContract.Recipe.TABLE_NAME, null, values);
     }
 
@@ -162,5 +170,38 @@ public class Recipe {
         }
 
         return r;
+    }
+
+    public Bitmap GetImage(Context context)
+    {
+        String imageName = "";
+
+        Bitmap theImage;
+
+        File file;
+        //check if there is text in the imageurl string
+        if (getImageURL().isEmpty())
+        {
+            Resources res = context.getResources();
+            theImage = BitmapFactory.decodeResource(res,R.drawable.defaultmealimage);
+        }
+        else {
+
+            file = new File(context.getFilesDir(), "/" + getImageURL());
+
+            //might not be downloaded
+            if(!file.exists())
+            {
+                Resources res = context.getResources();
+                theImage = BitmapFactory.decodeResource(res,R.drawable.defaultmealimage);
+                //file = new File(context.getFilesDir(), "/defaultmealimage.jpg");
+            }else
+            {
+                theImage = BitmapFactory.decodeFile(file.getAbsolutePath());
+            }
+        }
+
+
+        return theImage;
     }
 }

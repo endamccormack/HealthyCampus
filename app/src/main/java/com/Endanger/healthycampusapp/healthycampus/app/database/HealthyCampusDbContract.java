@@ -42,6 +42,6 @@ public class HealthyCampusDbContract {
         public static final String COLUMN_NAME_NAME = "Name";
         public static final String COLUMN_NAME_AMOUNT_IN_GRAMS = "AmountInGrams";
         public static final String COLUMN_NAME_INGREDIENT_TYPE = "IngredientType";
-        public static final String COLUMN_NAME_RECIPE_ID = "RecipeId";
+        public static final String COLUMN_NAME_RECIPE_ID = "Recipe_RecipeId";
     }
 }
