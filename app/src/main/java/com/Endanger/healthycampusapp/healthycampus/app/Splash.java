@@ -18,7 +18,6 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,7 +60,7 @@ public class Splash extends Activity {
     String url_Tags = "http://healthycampusportal.azurewebsites.net/Recipe/TagJson";
     String url_Ingredients = "http://healthycampusportal.azurewebsites.net/Recipe/IngredientJson";
 
-    String url_images_root = "http://healthycampusportal.azurewebsites.net/Images/uploads/";
+//    String url_images_root = "http://healthycampusportal.azurewebsites.net/Images/uploads/";
 
     ArrayList<HashMap<String, String>> arraylist;
     JSONObject jsonobject;
@@ -163,7 +162,7 @@ public class Splash extends Activity {
 //                if(r.get(i).getImageURL() != "")
 //                    new ImageDownloader(url_images_root + r.get(i).getImageURL()).execute();
             }
-            new ImageDownloader(r).execute();
+            //new ImageDownloader(r).execute();
 
             String recipeTagJson = sh.makeServiceCall(url_Recipe_Tag , ServiceHandler.GET);
             List<TagRecipes> rt = new CreateObjectFromJson().getRecipeTagObjectsFromJson(recipeTagJson);
@@ -230,65 +229,65 @@ public class Splash extends Activity {
         }
     }
 
-    public class ImageDownloader extends AsyncTask<Void, Void, Void> {
-        private String Url;
-        private String FILENAME;
-        private List<Recipe> Recipes;
-
-//        public ImageDownloader(String url){
-//            Url = url; //FILENAME = filename;
+//    public class ImageDownloader extends AsyncTask<Void, Void, Void> {
+//        private String Url;
+//        private String FILENAME;
+//        private List<Recipe> Recipes;
+//
+////        public ImageDownloader(String url){
+////            Url = url; //FILENAME = filename;
+////        }
+//
+//        public ImageDownloader(List<Recipe> recipes){
+//            Recipes = recipes;
 //        }
-
-        public ImageDownloader(List<Recipe> recipes){
-            Recipes = recipes;
-        }
-
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            for (int i = 0; i< Recipes.size(); i++) {
-                if (Recipes.get(i).getImageURL() != "") {
-                    Bitmap myBitmap = getBitmapFromURL(url_images_root + Recipes.get(i).getImageURL());
-
-                    try {
-                        FileOutputStream fos = openFileOutput(Recipes.get(i).getImageURL(), Context.MODE_PRIVATE);
-                        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void args) {
-
-        }
-
-        public Bitmap getBitmapFromURL(String link) {
-            Bitmap myBitmap;
-            try {
-                URL url = new URL(link);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                myBitmap = BitmapFactory.decodeStream(input);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.e("getBmpFromUrl error: ", e.getMessage().toString());
-                return null;
-            }
-
-            Bitmap resizedbitmap = Bitmap.createScaledBitmap(myBitmap, 800, 600, true);
-
-            return resizedbitmap;
-        }
-    }
+//
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//
+//            for (int i = 0; i< Recipes.size(); i++) {
+//                if (Recipes.get(i).getImageURL() != "") {
+//                    Bitmap myBitmap = getBitmapFromURL(url_images_root + Recipes.get(i).getImageURL());
+//
+//                    try {
+//                        FileOutputStream fos = openFileOutput(Recipes.get(i).getImageURL(), Context.MODE_PRIVATE);
+//                        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+//                        fos.close();
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void args) {
+//
+//        }
+//
+//        public Bitmap getBitmapFromURL(String link) {
+//            Bitmap myBitmap;
+//            try {
+//                URL url = new URL(link);
+//                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+//                connection.setDoInput(true);
+//                connection.connect();
+//                InputStream input = connection.getInputStream();
+//                myBitmap = BitmapFactory.decodeStream(input);
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                //Log.e("getBmpFromUrl error: ", e.getMessage().toString());
+//                return null;
+//            }
+//
+//            Bitmap resizedbitmap = Bitmap.createScaledBitmap(myBitmap, 800, 600, true);
+//
+//            return resizedbitmap;
+//        }
+//    }
 }

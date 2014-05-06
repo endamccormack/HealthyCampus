@@ -29,6 +29,8 @@ public class Recipe {
     private int DifficultyLevel;
     private String ImageURL;
 
+    String url_images_root = "http://healthycampusportal.azurewebsites.net/Images/uploads/";
+
     public Recipe(){    }
 
     public Recipe(int recipeId, String title, String description, String method, double prepTime,
@@ -99,7 +101,7 @@ public class Recipe {
         DifficultyLevel = difficultyLevel;
     }
 
-    public String getImageURL() {
+    public String getImageName() {
         return ImageURL;
     }
 
@@ -203,5 +205,9 @@ public class Recipe {
 
 
         return theImage;
+    }
+
+    public String getImageURL(){
+        return url_images_root + getImageName();
     }
 }

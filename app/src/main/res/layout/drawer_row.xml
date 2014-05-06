@@ -9,8 +9,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="6dip"
-        android:scaleType="centerCrop"
-        android:src="@drawable/sample_0"/>
+        android:scaleType="centerCrop"/>
     <TextView
         android:id="@+id/title"
         android:layout_width="fill_parent"

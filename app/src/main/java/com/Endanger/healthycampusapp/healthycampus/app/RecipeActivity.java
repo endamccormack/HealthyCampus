@@ -9,6 +9,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.bluetooth.BluetoothClass;
+import android.content.Context;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -28,6 +29,7 @@ import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDat
 import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDbHelper;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Ingredient;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Recipe;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -247,6 +249,8 @@ public class RecipeActivity extends Activity implements ActionBar.TabListener {
 
         private Recipe recipe;
 
+        Context mContext;
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -270,7 +274,8 @@ public class RecipeActivity extends Activity implements ActionBar.TabListener {
             View rootView = inflater.inflate(R.layout.fragment_recipeactivity_description, container, false);
 
             ImageView headerImage = (ImageView)rootView.findViewById(R.id.recipeoverviewimageView);
-            headerImage.setImageBitmap(recipe.GetImage(rootView.getContext()));
+            //headerImage.setImageBitmap(recipe.GetImage(rootView.getContext()));
+            Picasso.with(getActivity()).load(recipe.getImageURL()).placeholder(R.drawable.defaultmealimage).into(headerImage);
 
             TextView overviewTitle = (TextView)rootView.findViewById(R.id.overviewTitle);
             overviewTitle.setText(recipe.getTitle());

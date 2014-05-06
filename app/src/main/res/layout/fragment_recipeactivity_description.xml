@@ -13,7 +13,6 @@
         android:layout_height="200dp"
         android:id="@+id/recipeoverviewimageView"
         android:scaleType="centerCrop"
-        android:src="@drawable/sample_0"
         android:layout_gravity="center_horizontal" />
     <TextView
         android:layout_width="fill_parent"

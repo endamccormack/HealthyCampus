@@ -1,7 +1,5 @@
 package com.Endanger.healthycampusapp.healthycampus.app.helpers;
 
-import android.util.Log;
-
 import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDbContract;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Ingredient;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Recipe;
@@ -49,7 +47,7 @@ public class CreateObjectFromJson {
                 e.printStackTrace();
             }
         } else {
-            Log.e("ServiceHandler", "Couldn't get any data from the url");
+
         }
 
         return recipes;
@@ -75,7 +73,7 @@ public class CreateObjectFromJson {
                 e.printStackTrace();
             }
         } else {
-            Log.e("ServiceHandler", "Couldn't get any data from the url");
+
         }
 
         return tagRecipeses;
@@ -100,7 +98,7 @@ public class CreateObjectFromJson {
                 e.printStackTrace();
             }
         } else {
-            Log.e("ServiceHandler", "Couldn't get any data from the url");
+            //Log.e("ServiceHandler", "Couldn't get any data from the url");
         }
 
         return tags;
@@ -135,7 +133,7 @@ public class CreateObjectFromJson {
                 e.printStackTrace();
             }
         } else {
-            Log.e("ServiceHandler", "Couldn't get any data from the url");
+
         }
 
         return ingredients;

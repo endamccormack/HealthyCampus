@@ -16,6 +16,7 @@ import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDat
 import com.Endanger.healthycampusapp.healthycampus.app.database.HealthyCampusDbHelper;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Recipe;
 import com.Endanger.healthycampusapp.healthycampus.app.database.Tag;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -94,8 +95,12 @@ public class ImageAdapter extends BaseAdapter {
         hiddenID.setText(String.valueOf(recipeId));
 
         ImageView image = (ImageView)view.findViewById(R.id.image);
-        image.setImageBitmap(r.GetImage(mContext));
+        //image.setImageBitmap(r.GetImage(mContext));
         //image.setImageResource(R.drawable.defaultmealimage);
+
+
+        Picasso.with(mContext).load(r.getImageURL()).placeholder(R.drawable.defaultmealimage).resize(300, 300).into(image);
+        Picasso.with(mContext).setDebugging(true);
 
         TextView text = (TextView)view.findViewById(R.id.title);
         text.setText(r.getTitle() != null ? r.getTitle() : "Unknown" );
@@ -108,28 +113,10 @@ public class ImageAdapter extends BaseAdapter {
                 Activity activity = (Activity) mContext;
                 k.putExtra("RecipeId", String.valueOf(recipeId));
                 mContext.startActivity(k);
-//                mContext.startActivityForResult(k, 1);
-//
 
-//                activity.startActivityForResult(k, 1);
                 activity.overridePendingTransition(R.anim.push_left_out, R.anim.push_left_in);
             }
         });
-//        view.setOnItemClickListener(new View.OnItemClickListener() {
-//                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-//                    Intent k = new Intent(getActivity(), RecipeActivity.class);
-//                    String recipeId = ((TextView)view.findViewById(R.id.hiddenRecipeId)).getText().toString();
-//
-//                    //im sincerely sorry
-//                    recipeId = ((TextView)(((GridView)view.findViewById(R.id.gridview)).getChildAt(position)).findViewById(R.id.hiddenRecipeId)).getText().toString();
-//
-//                    k.putExtra("RecipeId", recipeId);
-//                    startActivityForResult(k, 1);
-//
-//                    getActivity().overridePendingTransition(R.anim.push_left_out, R.anim.push_left_in);
-//                }
-//            });
-
             return  view;
     }
 }
